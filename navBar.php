@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <?php if (isset($user)): ?>
+        
+        <p>Hello <?= htmlspecialchars($user["name"]) ?></p>
+        
+        <p><a href="logout.php">Log out</a></p>
+        
+    <?php else: ?>
+        
+        <p><a href="login.php">Ienākt</a> vai <a href="signup.html">reģistrēties</a></p>
+        
+    <?php endif; ?>
     <div class="topnav">
         <div class="topnavLeft">
             <a href="#">SĀKUMS</a>
@@ -16,11 +27,6 @@
                 <input type="text" id="searchText" name="searchText" placeholder="Meklēt">
                 <input type="submit" value="Meklēt">
             </form>
-            <button class="cart"><img src="images/cart.png"></button>
-            <div class="logIn">
-                <button type="button" id="signInBtn">REĢISTRĒTIES</button>
-                <button type="button" id="logInBtn">IENĀKT</button>
-            </div> 
         </div>
     </div>
     <script src="navBarScript.js"></script>
