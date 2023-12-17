@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+include_once "func-user.php";
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
 
@@ -10,7 +10,6 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 
     $email = $_POST['email'];
     $password = $_POST['password'];
-
     $text = "'E-pasts'";
     $location = "../login.php";
     $ms = "error";
@@ -38,20 +37,35 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             if (password_verify($password, $user_password)) {
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['user_email'] = $user_email;
-                header("Location: ../admin.php");
+                if ($userStatus == 0) {
+                    header("Location: ../index.php");
+                    exit();
+                } else if ($userStatus == 1) {
+                    header("Location: ../admin.php");
+                    exit();
+                } 
+                else if ($userStatus == 2) {
+                    header("Location: ../login.php");
+                    echo "dirsaa";
+                    exit();
+                }
             } else {
                 $em = "Nepareizs e-pasts vai parole!";
                 header("Location: ../login.php?error=$em");
+                exit();
             }
         } else {
             $em = "Nepareizs e-pasts vai parole!";
             header("Location: ../login.php?error=$em");
+            exit();
         }
     } else {
         $em = "Nepareizs e-pasts vai parole!";
         header("Location: ../login.php?error=$em");
+        exit();
     }
 
 } else {
     header("Location: ../login.php");
+    exit();
 }

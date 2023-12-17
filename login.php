@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
             $_SESSION["user_id"] = $user["id"];
             
-            header("Location: index.php");
+            header("Location: admin.php");
             exit;
         }
     }
@@ -59,13 +59,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="exampleInputEmail1" class="form-label">E-pasts</label>
                 <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
-
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Parole</label>
                 <input type="password" class="form-control" name="password" id="exampleInputPassword1">
             </div>
             <button type="submit" class="btn btn-primary">Ieiet</button>
-            <a href="index.php" style="text-decoration:none;">Atpakaļ uz veikalu</a>
+            <a href="register.php" style="text-decoration:none;">Reģistrēties</a>
         </form>
     </div>
     

@@ -1,18 +1,23 @@
 <?php 
-session_start();
 
-if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
+include_once "db_conn.php";
 
-    include "db_conn.php";
+include_once "php/func-user.php";
+$userStatus = checkUserStatus($conn);
 
-    include "php/func-book.php";
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_email']) && $userStatus == 1) {
+
+    include_once "php/func-book.php";
     $books = get_all_books($conn);
 
-    include "php/func-author.php";
+    include_once "php/func-author.php";
     $authors = get_all_author($conn);
 
-	include "php/func-category.php";
+	include_once "php/func-category.php";
     $categories = get_all_categories($conn);
+
+    exit();
+
 ?>
 
 
@@ -30,7 +35,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
     <!-- -->
 </head>
 <body>
-    <div class="navbar">
+    <div class="container">
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="admin.php">Administrators</a>
@@ -43,29 +48,45 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
                         <a class="nav-link" href="index.php">Veikals</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pievienot grāmatu</a>
+                        <a class="nav-link" href="add-book.php">Pievienot Grāmatu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pievienot kategoriju</a>
+                        <a class="nav-link" href="add-category.php">Pievienot Kategoriju</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pievienot Autoru</a>
+                        <a class="nav-link" href="add-author.php">Pievienot Autoru</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">Iziet</a>
                     </li>
                 </div>
             </div>
-            </nav>
+        </nav>
     </div>
+    <form action="search.php" method="get" style="width: 100%; max-width: 30rem">
+
+       	<div class="input-group my-5">
+		  <input type="text" 
+		         class="form-control"
+		         name="key" 
+		         placeholder="Meklēt grāmatu" 
+		         aria-label="Meklēt grāmatu" 
+		         aria-describedby="basic-addon2">
+
+		  <button class="input-group-text btn btn-primary" id="basic-addon2">
+		          <img src="img/search.png" width="20">
+		  </button>
+		</div>
+    </form>
+
     <?php if ($books === 0) { ?>
-        empty
+        <div class="alert alert-warning text-center p-5" role="alert">Datubāzē nav grāmatu.</div>
     <?php } else {?>
-    <h4 class="mt-5">Visas grāmatas</h4>
-    <table class="table table-bordered shadow">
+    <h4 class="mx-auto" style="width: 10%;">Visas grāmatas</h4>
+    <table class="table table-bordered shadow mx-auto" style="width: 70%;">
         <thead>
             <tr>
-                <th>#</th>
+                <th>N.p.k.</th>
                 <th>Tituls</th>
                 <th>Autors</th>
                 <th>Apraksts</th>
@@ -100,7 +121,8 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
                 <td><?=$book['description']?></td>
                 <td>
                     <?php if ($categories == 0) {
-						echo "Undefined";}else{ 
+						    echo "Undefined";
+                        } else { 
 
 					    foreach ($categories as $category) {
 					    	if ($category['id'] == $book['category_id']) {
@@ -111,8 +133,8 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
 					?>
                 </td>
                 <td>
-                    <a href="#" class="btn btn-warning">Rediģēt</a>
-                    <a href="#" class="btn btn-danger">Dzēst</a>
+                    <a href="edit-book.php?id=<?=$book['id']?>" class="btn btn-warning m-1">Rediģēt</a>
+                    <a href="php/delete-book.php?id=<?=$book['id']?>" class="btn btn-danger m-1">Dzēst</a>
                 </td>
             </tr>
             <?php } ?>
@@ -121,20 +143,13 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
     <?php } ?>
 
     <?php  if ($categories == 0) { ?>
-        <div class="alert alert-warning 
-                    text-center p-5" 
-                role="alert">
-                <img src="img/empty.png" 
-                    width="100">
-                <br>
-            Datubāzē nav nevienas kategorijas
-        </div>
+        <div class="alert alert-warning text-center p-5" role="alert">Datubāzē nav nevienas kategorijas</div>
     <?php }else {?>
-    <h4 class="mt-5">Visas kategorijas</h4>
-    <table class="table table-bordered shadow">
+    <h4 class="mx-auto pt-5" style="width: 10%;">Visas kategorijas</h4>
+    <table class="table table-bordered shadow mx-auto" style="width: 70%;">
         <thead>
             <tr>
-                <th>#</th>
+                <th>N.p.k.</th>
                 <th>Kategorijas nosaukums</th>
                 <th>Darbība</th>
             </tr>
@@ -164,20 +179,13 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_email'])) {
     <?php } ?>
 
     <?php  if ($authors == 0) { ?>
-        <div class="alert alert-warning 
-                    text-center p-5" 
-                role="alert">
-                <img src="img/empty.png" 
-                    width="100">
-                <br>
-            Datubāzē nav autoru.
-        </div>
+        <div class="alert alert-warning text-center p-5" role="alert">Datubāzē nav neviena autora.</div>
     <?php }else {?>
-    <h4 class="mt-5">Visi autori</h4>
-    <table class="table table-bordered shadow">
+    <h4 class="mx-auto pt-5" style="width: 10%;">Visi autori</h4>
+    <table class="table table-bordered shadow mx-auto" style="width: 70%;">
         <thead>
             <tr>
-                <th>#</th>
+                <th>N.p.k.</th>
                 <th>Autora pilnais vārds</th>
                 <th>Darbība</th>
             </tr>
